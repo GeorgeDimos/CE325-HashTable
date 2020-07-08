@@ -33,17 +33,11 @@ bool HashTable::isAvailable(int pos) const {
 	return table[pos].compare("")==0 || table[pos].compare("##tomb##")==0;
 }
 
-/*Should be called only if contains() returned true*/
-int HashTable::findPos(const string &s){
-	int i = getHashCode(s.c_str())%capacity;
-	while(table[i].compare(s)){i=(i+1)%capacity;}
-	return i;
-}
-
 HashTable::HashTable(int capacity) {
-	table = new string[capacity];
-	if( capacity<=0 || table == NULL){
-		throw new std::bad_alloc;
+	std::bad_alloc ex;
+	table = new (nothrow) string[capacity];
+	if(capacity<=0 || table == NULL){
+		throw ex;
 	}
 
 	for(int i=0;i<capacity; i++){
@@ -57,7 +51,7 @@ HashTable::HashTable(const HashTable &ht) {
 	size = ht.size;
 	capacity = ht.capacity;
 
-	table = new string[capacity];
+	table = new (nothrow) string[capacity];
 	if(table == NULL){
 		throw new std::bad_alloc;
 	}
@@ -124,7 +118,7 @@ bool HashTable::add(const string &str) {
 }
 
 bool HashTable::add(const char *s) {
-	
+
 	int orig_pos = getHashCode(s)%capacity;
 	int i = orig_pos;
 	while(1){
@@ -157,20 +151,25 @@ bool HashTable::remove(const char *s) {
 	if(!contains(s)){
 		return false;
 	}
-
-	int pos = findPos(s);
-	table[pos].assign("##tomb##");
+	int i = getHashCode(s)%capacity;
+	while(table[i].compare(s)){
+		i=(i+1)%capacity;
+	}
+	table[i].assign("##tomb##");
 	size--;
 	return true;
 }
 
 HashTable& HashTable::operator=(const HashTable &ht) {
+
 	size = ht.size;
 	capacity = ht.capacity;
 	
-	table = new string[capacity];
+	delete []table;
+	table = new (nothrow) string[capacity];
+	std::bad_alloc ex;
 	if(table == NULL){
-		throw new std::bad_alloc;
+		throw ex;
 	}
 
 	for(int i=0;i<capacity; i++){
@@ -248,9 +247,11 @@ HashTable& HashTable::operator += (const HashTable &t) {
 
 	HashTable n = HashTable(*this);
 
+	delete[] table;
 	this->table = new (nothrow) string[this->capacity + t.capacity];
+	std::bad_alloc ex;
 	if(this->table==NULL){
-		throw std::bad_alloc();
+		throw ex;
 	}
 
 	this->capacity += t.capacity;

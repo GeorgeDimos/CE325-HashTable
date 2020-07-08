@@ -15,7 +15,6 @@ ExtHashTable::ExtHashTable(const ExtHashTable &t) :
 	upper_bound_ratio (t.upper_bound_ratio),
 	lower_bound_ratio (t.lower_bound_ratio){}
 
-
 void ExtHashTable::rehash() {
 	if(size==0){return;}
 	if(((double)size/capacity)>upper_bound_ratio){
@@ -37,6 +36,7 @@ void ExtHashTable::rehashing(int newcapacity){
 
 	this->size = newHashTable.getSize();
 	this->capacity = newHashTable.getCapacity();
+	delete []this->table;
 	this->table = new string[this->capacity];
 	for(int i =0; i<newHashTable.getCapacity(); i++){
 		this->table[i].assign(newHashTable.table[i]);
@@ -130,9 +130,14 @@ ExtHashTable & ExtHashTable::operator+=(const ExtHashTable &table) {
 ExtHashTable & ExtHashTable::operator=(const ExtHashTable &t) {
 	this->size = t.size;
 	this->capacity = t.capacity;
+	this->upper_bound_ratio = t.upper_bound_ratio;
+	this->lower_bound_ratio = t.lower_bound_ratio;
+
+	delete []this->table;
 	this->table = new string[t.capacity];
 	for(int i =0; i<t.getCapacity(); i++){
 		this->table[i].assign(t.table[i]);
 	}
+
 	return *this;
 }

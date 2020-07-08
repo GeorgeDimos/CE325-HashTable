@@ -14,13 +14,11 @@ int capacity;
 string *table;
 static int getHashCode(const char *str);
 
-int findPos(const string &s);
 bool isEmpty(int pos) const;
 bool isTomb(int pos) const;
 bool isAvailable(int pos) const;
 
 public:  
-//string getTableEntry(int i);
 HashTable(int capacity=8);
 HashTable(const HashTable &ht);
 int getSize() const;
