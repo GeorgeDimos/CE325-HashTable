@@ -5,11 +5,10 @@
 #include "ExtHashTable.h"
 
 ExtHashTable::ExtHashTable( double upper_bound_ratio, double lower_bound_ratio, int size) :
-	HashTable::HashTable(size),
+	HashTable(size),
 	upper_bound_ratio(upper_bound_ratio),
 	lower_bound_ratio(lower_bound_ratio){}
 
-  
 ExtHashTable::ExtHashTable(const ExtHashTable &t) : 
 	HashTable(t),	
 	upper_bound_ratio (t.upper_bound_ratio),
@@ -26,7 +25,7 @@ void ExtHashTable::rehash() {
 }
 
 void ExtHashTable::rehashing(int newcapacity){
-	HashTable newHashTable =  HashTable(newcapacity);
+	HashTable newHashTable (newcapacity);
 
 	for(int i=0; i<this->capacity; i++){
 		if(!this->isAvailable(i)){
@@ -69,25 +68,25 @@ bool ExtHashTable::remove(const char *s) {
 }
 
 ExtHashTable ExtHashTable::operator+(const string &str) const{
-	ExtHashTable newHashTable =  *this;
+	ExtHashTable newHashTable (*this);
 	newHashTable.add(str);
 	return newHashTable;
 }
 
 ExtHashTable ExtHashTable::operator+(const char* s) const{
-	ExtHashTable newHashTable =  *this;
+	ExtHashTable newHashTable (*this);
 	newHashTable.add(s);
 	return newHashTable;
 }
 
 ExtHashTable ExtHashTable::operator-(const string &str) const{
-	ExtHashTable newHashTable =  *this;
+	ExtHashTable newHashTable (*this);
 	newHashTable.remove(str);
 	return newHashTable;
 }
 
 ExtHashTable ExtHashTable::operator-(const char *s) const{
-	ExtHashTable newHashTable =  *this;
+	ExtHashTable newHashTable (*this);
 	newHashTable.remove(s);
 	return newHashTable;
 }
@@ -109,7 +108,7 @@ bool ExtHashTable::operator -= (const char *s) {
 }
 
 ExtHashTable ExtHashTable::operator+(const ExtHashTable &table) const {
-	ExtHashTable newHashTable =  ExtHashTable(*this);
+	ExtHashTable newHashTable (*this);
 	for(int i=0; i<table.capacity; i++){
 		if(!table.isAvailable(i)){
 			newHashTable.add(table.table[i]);

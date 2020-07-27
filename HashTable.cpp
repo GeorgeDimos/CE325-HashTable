@@ -18,15 +18,11 @@ int HashTable::getSize() const { return size; }
 int HashTable::getCapacity() const {return capacity; }
 
 bool HashTable::isEmpty(int pos) const { 
-	if(table[pos]=="") 
-		return true;
-	return false;
+	return table[pos]=="";
 }
 
 bool HashTable::isTomb(int pos) const { 
-	if(table[pos].compare("##tomb##")==0)
-		return true; 
-	return false;
+	return table[pos].compare("##tomb##")==0;
 }
 
 bool HashTable::isAvailable(int pos) const {
@@ -66,9 +62,10 @@ bool HashTable::contains(const string &s) const {
 }
 
 bool HashTable::contains(const char *s) const {
-	int orig_pos = getHashCode(s)%capacity;
-	int i = orig_pos;
-	while(1){
+	int originalPosition = getHashCode(s)%capacity;
+	int i = originalPosition;
+
+	do{
 
 		if(!table[i].compare(s)){
 			return true;
@@ -80,11 +77,9 @@ bool HashTable::contains(const char *s) const {
 
 		i = (i+1)%capacity;
 
-		if(i==orig_pos){
-			return false;
-		}
+	}while(i!=originalPosition);
 
-	}
+	return false;
 }
 
 string HashTable::print() const {
@@ -119,9 +114,9 @@ bool HashTable::add(const string &str) {
 
 bool HashTable::add(const char *s) {
 
-	int orig_pos = getHashCode(s)%capacity;
-	int i = orig_pos;
-	while(1){
+	int originalPosition = getHashCode(s)%capacity;
+	int i = originalPosition;
+	do{
 
 		if(table[i]==s){
 			return false;
@@ -134,13 +129,10 @@ bool HashTable::add(const char *s) {
 		}
 
 		i = (i+1)%capacity;
-		
-		if(i==orig_pos){
-			cout<<"THROW Exception!\n";
-			throw HashTableException();
-		}
 
-	}
+	}while(i!=originalPosition);
+	cout<<"THROW Exception!\n";
+	throw HashTableException();
 }
 
 bool HashTable::remove(const string &str) {
@@ -195,7 +187,7 @@ bool HashTable::operator -= (const char *s) {
 }
 
 HashTable HashTable::operator + (const string &str) const {
-	HashTable n = HashTable(*this);
+	HashTable n (*this);
 	try{
 		n.add(str);
 	}
@@ -206,7 +198,7 @@ HashTable HashTable::operator + (const string &str) const {
 }
 
 HashTable HashTable::operator + (const char* s) const {
-	HashTable n = HashTable(*this);
+	HashTable n (*this);
 	try{
 		n.add(s);
 	}
@@ -217,19 +209,19 @@ HashTable HashTable::operator + (const char* s) const {
 }
 
 HashTable HashTable::operator - (const string &str) const {
-	HashTable n = HashTable(*this);
+	HashTable n (*this);
 	n.remove(str);
 	return n;
 }
 
 HashTable HashTable::operator - (const char *s) const {
-	HashTable n = HashTable(*this);
+	HashTable n (*this);
 	n.remove(s);
 	return n;
 }
 
 HashTable HashTable::operator + (const HashTable &t) const {
-	HashTable n = HashTable(this->capacity + t.capacity);
+	HashTable n (this->capacity + t.capacity);
 	for(int i=0; i<this->capacity; i++){
 		if(!this->isAvailable(i)){
 			n.add(this->table[i]);
@@ -245,7 +237,7 @@ HashTable HashTable::operator + (const HashTable &t) const {
 
 HashTable& HashTable::operator += (const HashTable &t) {
 
-	HashTable n = HashTable(*this);
+	HashTable n (*this);
 
 	delete[] table;
 	this->table = new (nothrow) string[this->capacity + t.capacity];

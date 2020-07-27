@@ -55,7 +55,7 @@ HashTable::Iterator HashTable::Iterator::operator++() {
 }
 
 HashTable::Iterator HashTable::Iterator::operator++(int a) {
-	Iterator it = Iterator(*this);
+	Iterator it (*this);
 	curr++;
 	while(curr!=&ht->table[ht->capacity] && (!(*curr).compare("") || !(*curr).compare("##tomb##"))){
 		curr++;
